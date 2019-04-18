@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitMath", "DigitMath\DigitMath.csproj", "{3D00038A-DDA8-499D-B0DF-64153D867184}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitMathTests", "DigitMathTests\DigitMathTests.csproj", "{2393D02D-5A58-42D5-A41D-1878568BE330}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D00038A-DDA8-499D-B0DF-64153D867184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D00038A-DDA8-499D-B0DF-64153D867184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D00038A-DDA8-499D-B0DF-64153D867184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D00038A-DDA8-499D-B0DF-64153D867184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2393D02D-5A58-42D5-A41D-1878568BE330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2393D02D-5A58-42D5-A41D-1878568BE330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2393D02D-5A58-42D5-A41D-1878568BE330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2393D02D-5A58-42D5-A41D-1878568BE330}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82229CCD-315F-450B-8BEC-192C0508B408}
+	EndGlobalSection
+EndGlobal
