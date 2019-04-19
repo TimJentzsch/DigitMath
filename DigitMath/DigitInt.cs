@@ -227,8 +227,9 @@ namespace DigitMath
             var overhead = 0;
             var leftLength = left.Length;
             var rightLength = right.Length;
+            var maxLength = Math.Max(leftLength, rightLength);
 
-            for (var i = 1; i <= Math.Max(leftLength, rightLength); i++)
+            for (var i = 1; i <= maxLength || overhead != 0; i++)
             {
                 var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
                 var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
@@ -250,11 +251,21 @@ namespace DigitMath
         }
 
         /// <summary>
-        /// Subtracts two <see cref="DigitInt"/>s.
+        /// Adds <c>1</c> to <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to add <c>1</c> to</param>
+        /// <returns>The successor of <paramref name="value"/>.</returns>
+        public static DigitInt operator ++(DigitInt value)
+        {
+            return value + new DigitInt(1);
+        }
+
+        /// <summary>
+        /// Determines the difference of <paramref name="left"/> and <paramref name="right"/>.
         /// </summary>
         /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
         /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
-        /// <returns>The subtraction of the two <see cref="DigitInt"/>s.</returns>
+        /// <returns>The difference of <paramref name="left"/> and <paramref name="right"/>.</returns>
         public static DigitInt operator -(DigitInt left, DigitInt right)
         {
             if (left.Base != right.Base)
@@ -309,6 +320,41 @@ namespace DigitMath
         }
 
         /// <summary>
+        /// Subtracts <c>1</c> from <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to substract <c>1</c> of.</param>
+        /// <returns>The predecessor of <paramref name="value"/>.</returns>
+        public static DigitInt operator --(DigitInt value)
+        {
+            return value - new DigitInt(1);
+        }
+
+        /// <summary>
+        /// Determines the product of <paramref name="left"/> and <paramref name="right"/>.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to multiply.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to multiply.</param>
+        /// <returns>The product of <paramref name="left"/> and <paramref name="right"/>.</returns>
+        public static DigitInt operator *(DigitInt left, DigitInt right)
+        {
+            var product = new DigitInt(0);
+            var absLeft = left.Absolute();
+            var absRight = right.Absolute();
+
+            var counter = Min(absLeft, absRight);
+            var summand = Max(absLeft, absRight);
+
+            for (var i = new DigitInt(0); i < counter; i++)
+            {
+                product += summand;
+            }
+
+            product.IsNegative = left.IsNegative ^ right.IsNegative;
+
+            return product;
+        }
+
+        /// <summary>
         /// Calculates the sum over all <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
@@ -323,6 +369,112 @@ namespace DigitMath
             }
 
             return curSum;
+        }
+
+        /// <summary>
+        /// Calculates the sum over all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
+        /// <returns>The sum of all <paramref name="values"/>.</returns>
+        public static DigitInt Sum(params DigitInt[] values)
+        {
+            var curSum = new DigitInt(0);
+
+            foreach (var value in values)
+            {
+                curSum += value;
+            }
+
+            return curSum;
+        }
+
+        /// <summary>
+        /// Determines the product of the given <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The <see cref="DigitInt"/>s to multiply together.</param>
+        /// <returns>The product of the given <paramref name="values"/>.</returns>
+        public static DigitInt Product(IEnumerable<DigitInt> values)
+        {
+            var curProduct = new DigitInt(1);
+
+            foreach (var value in values)
+            {
+                curProduct *= value;
+
+                if (curProduct == new DigitInt(0))
+                    return curProduct;
+            }
+
+            return curProduct;
+        }
+
+        /// <summary>
+        /// Determines the product of the given <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The <see cref="DigitInt"/>s to multiply together.</param>
+        /// <returns>The product of the given <paramref name="values"/>.</returns>
+        public static DigitInt Product(params DigitInt[] values)
+        {
+            var curProduct = new DigitInt(1);
+
+            foreach (var value in values)
+            {
+                curProduct *= value;
+
+                if (curProduct == new DigitInt(0))
+                    return curProduct;
+            }
+
+            return curProduct;
+        }
+
+        #region Max/Min
+        /// <summary>
+        /// Determines the maximum <see cref="DigitInt"/> of all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The values to get the maximum of.</param>
+        /// <returns>The maximum <see cref="DigitInt"/> of all <paramref name="values"/>.</returns>
+        public static DigitInt Max(IEnumerable<DigitInt> values)
+        {
+            return values.Max();
+        }
+
+        /// <summary>
+        /// Determines the maximum <see cref="DigitInt"/> of all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The values to get the maximum of.</param>
+        /// <returns>The maximum <see cref="DigitInt"/> of all <paramref name="values"/>.</returns>
+        public static DigitInt Max(params DigitInt[] values)
+        {
+            return values.Max();
+        }
+
+        /// <summary>
+        /// Determines the minimum <see cref="DigitInt"/> of all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The values to get the minimum of.</param>
+        /// <returns>The minimum <see cref="DigitInt"/> of all <paramref name="values"/>.</returns>
+        public static DigitInt Min(IEnumerable<DigitInt> values)
+        {
+            return values.Min();
+        }
+
+        /// <summary>
+        /// Determines the minimum <see cref="DigitInt"/> of all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The values to get the minimum of.</param>
+        /// <returns>The minimum <see cref="DigitInt"/> of all <paramref name="values"/>.</returns>
+        public static DigitInt Min(params DigitInt[] values)
+        {
+            return values.Min();
+        }
+        #endregion
+
+        public DigitInt Absolute()
+        {
+            var absolute = Copy();
+            absolute.IsNegative = false;
+            return absolute;
         }
 
         /// <summary>
