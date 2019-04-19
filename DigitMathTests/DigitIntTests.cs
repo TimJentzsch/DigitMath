@@ -39,15 +39,33 @@ namespace DigitMathTests
         {
             var left = new DigitInt(1);
             var right = new DigitInt(2);
-            Assert.AreEqual(new DigitInt(3), left + right);
+            Assert.AreEqual(new DigitInt(3), left + right,
+                $"{left} + {right}");
 
             left = new DigitInt(55);
             right = new DigitInt(202);
-            Assert.AreEqual(new DigitInt(257), left + right);
+            Assert.AreEqual(new DigitInt(257), left + right,
+                $"{left} + {right}");
 
             left = new DigitInt(1332);
             right = new DigitInt(99);
-            Assert.AreEqual(new DigitInt(1431), left + right);
+            Assert.AreEqual(new DigitInt(1431), left + right,
+                $"{left} + {right}");
+
+            left = new DigitInt(-1332);
+            right = new DigitInt(99);
+            Assert.AreEqual(new DigitInt(-1233), left + right,
+                $"{left} + {right}");
+
+            left = new DigitInt(1332);
+            right = new DigitInt(-99);
+            Assert.AreEqual(new DigitInt(1233), left + right,
+                $"{left} + {right}");
+
+            left = new DigitInt(-1332);
+            right = new DigitInt(-99);
+            Assert.AreEqual(new DigitInt(-1431), left + right,
+                $"{left} + {right}");
         }
 
         [TestMethod]
@@ -63,6 +81,62 @@ namespace DigitMathTests
                 new DigitInt(99)
             };
             Assert.AreEqual(new DigitInt(1234), DigitInt.Sum(values));
+        }
+
+        [TestMethod]
+        public void TestSub()
+        {
+            var left = new DigitInt(7);
+            var right = new DigitInt(5);
+            Assert.AreEqual(new DigitInt(2), left - right, $"{left} - {right}");
+
+            left = new DigitInt(55);
+            right = new DigitInt(202);
+            Assert.AreEqual(new DigitInt(-147), left - right, $"{left} - {right}");
+
+            left = new DigitInt(1332);
+            right = new DigitInt(99);
+            Assert.AreEqual(new DigitInt(1233), left - right, $"{left} - {right}");
+
+            left = new DigitInt(-1332);
+            right = new DigitInt(99);
+            Assert.AreEqual(new DigitInt(-1431), left - right, $"{left} - {right}");
+
+            left = new DigitInt(1332);
+            right = new DigitInt(-99);
+            Assert.AreEqual(new DigitInt(1431), left - right, $"{left} - {right}");
+
+            left = new DigitInt(-1332);
+            right = new DigitInt(-99);
+            Assert.AreEqual(new DigitInt(-1233), left - right, $"{left} - {right}");
+        }
+
+        [TestMethod]
+        public void TestCompareTo()
+        {
+            var left = new DigitInt(7);
+            var right = new DigitInt(5);
+            Assert.IsFalse(left < right, $"{left} < {right}");
+
+            left = new DigitInt(7);
+            right = new DigitInt(5);
+            Assert.IsTrue(left > right, $"{left} > {right}");
+
+            left = new DigitInt(-10);
+            right = new DigitInt(5);
+            Assert.IsTrue(left < right, $"{left} < {right}");
+
+            left = new DigitInt(-10);
+            right = new DigitInt(5);
+            Assert.IsFalse(left > right, $"{left} > {right}");
+
+            left = new DigitInt(-7);
+            right = new DigitInt(-5);
+            Assert.IsTrue(left < right, $"{left} < {right}");
+
+            left = new DigitInt(-7);
+            right = new DigitInt(-5);
+            Assert.IsFalse(left > right, $"{left} > {right}");
         }
 
         [TestMethod]

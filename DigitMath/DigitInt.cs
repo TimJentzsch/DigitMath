@@ -57,11 +57,11 @@ namespace DigitMath
             IsNegative = false;
         }
 
-        public DigitInt(byte[] digits, byte numBase)
+        public DigitInt(byte[] digits, byte numBase, bool isNegative)
         {
             Base = numBase;
             Digits = digits;
-            IsNegative = false;
+            IsNegative = isNegative;
         }
 
         public DigitInt(int value)
@@ -88,6 +88,7 @@ namespace DigitMath
 
         #region Methods
         #region Operations
+        #region Comparisions
         /// <summary>
         /// Determines the order the <see cref="DigitInt"/>s should be sorted in.
         /// </summary>
@@ -101,6 +102,15 @@ namespace DigitMath
         {
             if (other == null)
                 return 1;
+
+            if (IsNegative && !other.IsNegative)
+                return -1;
+
+            if (!IsNegative && other.IsNegative)
+                return 1;
+
+            if (IsNegative && other.IsNegative)
+                return (-other).CompareTo(-Copy());
 
             if (Length.CompareTo(other.Length) != 0)
                 return Length.CompareTo(other.Length);
@@ -144,72 +154,6 @@ namespace DigitMath
                 return true;
 
             return (left.CompareTo(right) < 0);
-        }
-
-        /// <summary>
-        /// Adds two <see cref="DigitInt"/>s.
-        /// </summary>
-        /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
-        /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
-        /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
-        public static DigitInt operator +(DigitInt left, DigitInt right)
-        {
-            if (left.Base != right.Base)
-                throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
-
-            var addBase = left.Base;
-            var resultDigits = new LinkedList<byte>();
-            var overhead = 0;
-            var leftLength = left.Length;
-            var rightLength = right.Length;
-
-            for (var i = 1; i <= Math.Max(leftLength, rightLength); i++)
-            {
-                var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
-                var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
-                var fullValue = (ushort)((ushort)leftVal + (ushort)rightVal +  (ushort)overhead);
-                var nextValue = fullValue;
-
-                overhead = 0;
-
-                if (fullValue >= addBase)
-                {
-                    nextValue = (byte)(fullValue % addBase);
-                    overhead = (fullValue - nextValue) / addBase;
-                }
-
-                resultDigits.AddFirst((byte)nextValue);
-            }
-
-            return new DigitInt(resultDigits.ToArray(), addBase);
-        }
-
-        /// <summary>
-        /// Subtracts two <see cref="DigitInt"/>s.
-        /// </summary>
-        /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
-        /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
-        /// <returns>The subtraction of the two <see cref="DigitInt"/>s.</returns>
-        public static DigitInt operator -(DigitInt left, DigitInt right)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Calculates the sum over all <paramref name="values"/>.
-        /// </summary>
-        /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
-        /// <returns>The sum of all <paramref name="values"/>.</returns>
-        public static DigitInt Sum(IEnumerable<DigitInt> values)
-        {
-            var curSum = new DigitInt(0);
-
-            foreach (var value in values)
-            {
-                curSum += value;
-            }
-
-            return curSum;
         }
 
         /// <summary>
@@ -258,6 +202,127 @@ namespace DigitMath
             }
 
             return false;
+        }
+        #endregion
+
+        /// <summary>
+        /// Adds two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
+        /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
+        public static DigitInt operator +(DigitInt left, DigitInt right)
+        {
+            if (left.Base != right.Base)
+                throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
+
+            if (right.IsNegative)
+                return left - (-right);
+
+            if (left.IsNegative)
+                return right - (-left);
+
+            var addBase = left.Base;
+            var resultDigits = new LinkedList<byte>();
+            var overhead = 0;
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
+            for (var i = 1; i <= Math.Max(leftLength, rightLength); i++)
+            {
+                var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
+                var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
+                var fullValue = (ushort)((ushort)leftVal + (ushort)rightVal +  (ushort)overhead);
+                var nextValue = fullValue;
+
+                overhead = 0;
+
+                if (fullValue >= addBase)
+                {
+                    nextValue = (byte)(fullValue % addBase);
+                    overhead = (fullValue - nextValue) / addBase;
+                }
+
+                resultDigits.AddFirst((byte)nextValue);
+            }
+
+            return new DigitInt(resultDigits.ToArray(), addBase, false);
+        }
+
+        /// <summary>
+        /// Subtracts two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
+        /// <returns>The subtraction of the two <see cref="DigitInt"/>s.</returns>
+        public static DigitInt operator -(DigitInt left, DigitInt right)
+        {
+            if (left.Base != right.Base)
+                throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
+
+            if (right.IsNegative)
+                return left + (-right);
+
+            if (right > left)
+                return -(right - left);
+
+            var subBase = left.Base;
+            var resultDigits = new LinkedList<byte>();
+            var overhead = 0;
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
+            for (var i = 1; i <= Math.Max(leftLength, rightLength); i++)
+            {
+                var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
+                var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
+
+                var minuend = leftVal;
+                var subtrahend = (ushort)rightVal + (ushort)overhead;
+
+                overhead = 0;
+
+                if (subtrahend > minuend)
+                {
+                    overhead = 1;
+                    minuend += subBase;
+                }
+
+                var nextValue = (ushort)(minuend - subtrahend);
+
+                resultDigits.AddFirst((byte)nextValue);
+            }
+
+            return new DigitInt(resultDigits.ToArray(), subBase, false);
+        }
+
+        /// <summary>
+        /// Negates the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to negate.</param>
+        /// <returns>The negated <see cref="DigitInt"/>.</returns>
+        public static DigitInt operator -(DigitInt value)
+        {
+            var negation = value.Copy();
+            negation.IsNegative = !negation.IsNegative;
+            return negation;
+        }
+
+        /// <summary>
+        /// Calculates the sum over all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
+        /// <returns>The sum of all <paramref name="values"/>.</returns>
+        public static DigitInt Sum(IEnumerable<DigitInt> values)
+        {
+            var curSum = new DigitInt(0);
+
+            foreach (var value in values)
+            {
+                curSum += value;
+            }
+
+            return curSum;
         }
 
         /// <summary>
@@ -311,6 +376,11 @@ namespace DigitMath
             }
 
             return str.ToString();
+        }
+
+        public DigitInt Copy()
+        {
+            return new DigitInt(Digits, Base, IsNegative);
         }
         #endregion
     }
