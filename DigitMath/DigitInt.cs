@@ -183,6 +183,24 @@ namespace DigitMath
 
             return new DigitInt(resultDigits.ToArray(), addBase);
         }
+
+        /// <summary>
+        /// Calculates the sum over all <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
+        /// <returns>The sum of all <paramref name="values"/>.</returns>
+        public static DigitInt Sum(IEnumerable<DigitInt> values)
+        {
+            var curSum = new DigitInt(0);
+
+            foreach (var value in values)
+            {
+                curSum += value;
+            }
+
+            return curSum;
+        }
+
         /// <summary>
         /// Determines whether <paramref name="left"/> is equal to <paramref name="right"/>.
         /// </summary>

@@ -51,6 +51,21 @@ namespace DigitMathTests
         }
 
         [TestMethod]
+        public void TestSum()
+        {
+            var values = new DigitInt[]
+            {
+                new DigitInt(13),
+                new DigitInt(2),
+                new DigitInt(1114),
+                new DigitInt(0),
+                new DigitInt(6),
+                new DigitInt(99)
+            };
+            Assert.AreEqual(new DigitInt(1234), DigitInt.Sum(values));
+        }
+
+        [TestMethod]
         public void TestToString()
         {
             var num = new DigitInt(new byte[] { 1, 2, 3 });
