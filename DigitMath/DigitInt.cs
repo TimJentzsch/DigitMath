@@ -185,6 +185,17 @@ namespace DigitMath
         }
 
         /// <summary>
+        /// Subtracts two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
+        /// <returns>The subtraction of the two <see cref="DigitInt"/>s.</returns>
+        public static DigitInt operator -(DigitInt left, DigitInt right)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Calculates the sum over all <paramref name="values"/>.
         /// </summary>
         /// <param name="values">The <see cref="DigitInt"/>s to sum up.</param>
@@ -258,6 +269,30 @@ namespace DigitMath
             return Digits.GetHashCode();
         }
         #endregion
+
+        public void SetBase(byte newBase)
+        {
+            if (newBase == Base)
+                return;
+
+            throw new NotImplementedException();
+        }
+
+        protected void ToBase10()
+        {
+            if (Base == 10)
+                return;
+
+            throw new NotImplementedException();
+        }
+
+        protected void FromBase10(byte newBase)
+        {
+            if (Base != 10)
+                throw new FormatException($"The number is in base {Base}, but has to be in base 10.");
+
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Converts the <see cref="DigitInt"/> to its <see cref="string"/> representation.
