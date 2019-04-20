@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace DigitMath
@@ -9,7 +10,7 @@ namespace DigitMath
     /// <summary>
     /// A digit oriented presentation of an Integer value.
     /// </summary>
-    public class DigitInt : IComparable<DigitInt>
+    public class DigitInt : IComparable<DigitInt>, IConvertible
     {
         #region Attributes
         #region Indexers
@@ -87,7 +88,6 @@ namespace DigitMath
         #endregion
 
         #region Methods
-        #region Operations
         #region Comparisions
         /// <summary>
         /// Determines the order the <see cref="DigitInt"/>s should be sorted in.
@@ -205,13 +205,16 @@ namespace DigitMath
         }
         #endregion
 
+        #region Arithmetics
+        #region Operators
+        #region Addition
         /// <summary>
         /// Adds two <see cref="DigitInt"/>s.
         /// </summary>
         /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
         /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
         /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
-        public static DigitInt operator +(DigitInt left, DigitInt right)
+        public static DigitInt Add(DigitInt left, DigitInt right)
         {
             if (left.Base != right.Base)
                 throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
@@ -233,7 +236,7 @@ namespace DigitMath
             {
                 var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
                 var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
-                var fullValue = (ushort)((ushort)leftVal + (ushort)rightVal +  (ushort)overhead);
+                var fullValue = (ushort)((ushort)leftVal + (ushort)rightVal + (ushort)overhead);
                 var nextValue = fullValue;
 
                 overhead = 0;
@@ -251,6 +254,17 @@ namespace DigitMath
         }
 
         /// <summary>
+        /// Adds two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
+        /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
+        public static DigitInt operator +(DigitInt left, DigitInt right)
+        {
+            return Add(left, right);
+        }
+
+        /// <summary>
         /// Adds <c>1</c> to <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The <see cref="DigitInt"/> to add <c>1</c> to</param>
@@ -259,14 +273,16 @@ namespace DigitMath
         {
             return value + new DigitInt(1);
         }
+        #endregion
 
+        #region Subtraction
         /// <summary>
         /// Determines the difference of <paramref name="left"/> and <paramref name="right"/>.
         /// </summary>
         /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
         /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
         /// <returns>The difference of <paramref name="left"/> and <paramref name="right"/>.</returns>
-        public static DigitInt operator -(DigitInt left, DigitInt right)
+        public static DigitInt Sub(DigitInt left, DigitInt right)
         {
             if (left.Base != right.Base)
                 throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
@@ -306,6 +322,16 @@ namespace DigitMath
 
             return new DigitInt(resultDigits.ToArray(), subBase, false);
         }
+        /// <summary>
+        /// Determines the difference of <paramref name="left"/> and <paramref name="right"/>.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
+        /// <returns>The difference of <paramref name="left"/> and <paramref name="right"/>.</returns>
+        public static DigitInt operator -(DigitInt left, DigitInt right)
+        {
+            return Sub(left, right);
+        }
 
         /// <summary>
         /// Negates the <see cref="DigitInt"/>.
@@ -328,14 +354,16 @@ namespace DigitMath
         {
             return value - new DigitInt(1);
         }
+        #endregion
 
+        #region Multiplication
         /// <summary>
         /// Determines the product of <paramref name="left"/> and <paramref name="right"/>.
         /// </summary>
         /// <param name="left">The left <see cref="DigitInt"/> to multiply.</param>
         /// <param name="right">The right <see cref="DigitInt"/> to multiply.</param>
         /// <returns>The product of <paramref name="left"/> and <paramref name="right"/>.</returns>
-        public static DigitInt operator *(DigitInt left, DigitInt right)
+        public static DigitInt Mult(DigitInt left, DigitInt right)
         {
             var product = new DigitInt(0);
             var absLeft = left.Absolute();
@@ -353,7 +381,20 @@ namespace DigitMath
 
             return product;
         }
+        /// <summary>
+        /// Determines the product of <paramref name="left"/> and <paramref name="right"/>.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to multiply.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to multiply.</param>
+        /// <returns>The product of <paramref name="left"/> and <paramref name="right"/>.</returns>
+        public static DigitInt operator *(DigitInt left, DigitInt right)
+        {
+            return Mult(left, right);
+        }
+        #endregion
+        #endregion
 
+        #region Sum
         /// <summary>
         /// Calculates the sum over all <paramref name="values"/>.
         /// </summary>
@@ -387,7 +428,9 @@ namespace DigitMath
 
             return curSum;
         }
+        #endregion
 
+        #region Product
         /// <summary>
         /// Determines the product of the given <paramref name="values"/>.
         /// </summary>
@@ -427,8 +470,9 @@ namespace DigitMath
 
             return curProduct;
         }
+        #endregion
 
-        #region Max/Min
+        #region Max
         /// <summary>
         /// Determines the maximum <see cref="DigitInt"/> of all <paramref name="values"/>.
         /// </summary>
@@ -448,7 +492,9 @@ namespace DigitMath
         {
             return values.Max();
         }
+        #endregion
 
+        #region Min
         /// <summary>
         /// Determines the minimum <see cref="DigitInt"/> of all <paramref name="values"/>.
         /// </summary>
@@ -470,12 +516,18 @@ namespace DigitMath
         }
         #endregion
 
+        #region Absolute
+        /// <summary>
+        /// Determines the absolute value of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>The absolute value of the <see cref="DigitInt"/>.</returns>
         public DigitInt Absolute()
         {
             var absolute = Copy();
             absolute.IsNegative = false;
             return absolute;
         }
+        #endregion
 
         /// <summary>
         /// Gets the hashcode of the <see cref="DigitInt"/>.
@@ -512,6 +564,214 @@ namespace DigitMath
         }
 
         /// <summary>
+        /// Creates a copy of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>A copy of the <see cref="DigitInt"/>.</returns>
+        public DigitInt Copy()
+        {
+            return new DigitInt(Digits, Base, IsNegative);
+        }
+
+        #region Conversions
+        #region Implicit
+        #region ToDigitInt
+        /// <summary>
+        /// Converts an <see cref="Int32"/> to a <see cref="DigitInt"/> implicitly.
+        /// </summary>
+        /// <param name="value">The <see cref="Int32"/> to convert to a <see cref="DigitInt"/>.</param>
+        public static implicit operator DigitInt(int value)
+        {
+            return new DigitInt(value);
+        }
+        #endregion
+        #endregion
+
+        #region Explicit
+        #region FromDigitInt
+        public static explicit operator bool(DigitInt value)
+        {
+            return value.ToBoolean(null);
+        }
+
+        public static explicit operator byte(DigitInt value)
+        {
+            return value.ToByte(null);
+        }
+
+        public static explicit operator char(DigitInt value)
+        {
+            return value.ToChar(null);
+        }
+
+        public static explicit operator decimal(DigitInt value)
+        {
+            return value.ToDecimal(null);
+        }
+
+        public static explicit operator double(DigitInt value)
+        {
+            return value.ToDouble(null);
+        }
+
+        public static explicit operator short(DigitInt value)
+        {
+            return value.ToInt16(null);
+        }
+
+        public static explicit operator int(DigitInt value)
+        {
+            return value.ToInt32(null);
+        }
+
+        public static explicit operator long(DigitInt value)
+        {
+            return value.ToInt64(null);
+        }
+
+        public static explicit operator sbyte(DigitInt value)
+        {
+            return value.ToSByte(null);
+        }
+
+        public static explicit operator float(DigitInt value)
+        {
+            return value.ToSingle(null);
+        }
+
+        public static explicit operator BigInteger(DigitInt value)
+        {
+            return value.ToBigInteger(null);
+        }
+
+        public static explicit operator ushort(DigitInt value)
+        {
+            return value.ToUInt16(null);
+        }
+
+        public static explicit operator uint(DigitInt value)
+        {
+            return value.ToUInt32(null);
+        }
+
+        public static explicit operator ulong(DigitInt value)
+        {
+            return value.ToUInt64(null);
+        }
+
+        public static explicit operator string(DigitInt value)
+        {
+            return value.ToString();
+        }
+        #endregion
+        #endregion
+
+        #region IConvertable
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Object;
+        }
+
+        public bool ToBoolean(IFormatProvider provider)
+        {
+            if (Equals(new DigitInt(0)))
+                return false;
+
+            return true;
+        }
+
+        public byte ToByte(IFormatProvider provider)
+        {
+            return (byte)ToBigInteger(provider);
+        }
+
+        public char ToChar(IFormatProvider provider)
+        {
+            return (char)ToBigInteger(provider);
+        }
+
+        public DateTime ToDateTime(IFormatProvider provider)
+        {
+            return Convert.ToDateTime(ToInt64(provider));
+        }
+
+        public decimal ToDecimal(IFormatProvider provider)
+        {
+            return (decimal)ToBigInteger(provider);
+        }
+
+        public double ToDouble(IFormatProvider provider)
+        {
+            return (double)ToBigInteger(provider);
+        }
+
+        public short ToInt16(IFormatProvider provider)
+        {
+            return (short)ToBigInteger(provider);
+        }
+
+        public int ToInt32(IFormatProvider provider)
+        {
+            return (int)ToBigInteger(provider);
+        }
+
+        public long ToInt64(IFormatProvider provider)
+        {
+            return (long)ToBigInteger(provider);
+        }
+
+        public sbyte ToSByte(IFormatProvider provider)
+        {
+            return (sbyte)ToBigInteger(provider);
+        }
+
+        public float ToSingle(IFormatProvider provider)
+        {
+            return (float)ToBigInteger(provider);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return ToString();
+        }
+
+        public object ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType(ToInt64(provider), conversionType);
+        }
+
+        public ushort ToUInt16(IFormatProvider provider)
+        {
+            return (ushort)ToBigInteger(provider);
+        }
+
+        public uint ToUInt32(IFormatProvider provider)
+        {
+            return (uint)ToBigInteger(provider);
+        }
+
+        public ulong ToUInt64(IFormatProvider provider)
+        {
+            return (ulong)ToBigInteger(provider);
+        }
+        #endregion
+
+        public BigInteger ToBigInteger(IFormatProvider provider)
+        {
+            var result = new BigInteger(0);
+
+            for (var i = Length - 1; i >= 0; i--)
+            {
+                result *= Base;
+                result += Digits[i];
+            }
+
+            if (IsNegative)
+                result = -result;
+
+            return result;
+        }
+
+        /// <summary>
         /// Converts the <see cref="DigitInt"/> to its <see cref="string"/> representation.
         /// </summary>
         /// <returns>The <see cref="string"/> representation of the <see cref="DigitInt"/>.</returns>
@@ -529,11 +789,7 @@ namespace DigitMath
 
             return str.ToString();
         }
-
-        public DigitInt Copy()
-        {
-            return new DigitInt(Digits, Base, IsNegative);
-        }
+        #endregion
         #endregion
     }
 }
