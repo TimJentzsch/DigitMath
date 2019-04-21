@@ -26,7 +26,7 @@ namespace DigitMath
         /// <summary>
         /// The base of the <see cref="DigitInt"/>.
         /// </summary>
-        byte Base { get; }
+        byte Radix { get; }
         /// <summary>
         /// Determines whether the value of the <see cref="DigitInt"/> is negative.
         /// </summary>
@@ -40,28 +40,30 @@ namespace DigitMath
         #region Constructors
         public DigitInt()
         {
-            Base = 10;
+            Radix = 10;
             Digits = new byte[] { 0 };
             IsNegative = false;
         }
 
         public DigitInt(byte[] digits)
         {
-            Base = 10;
+            Radix = 10;
             Digits = digits;
             IsNegative = false;
+            HandleLeadingZeroes();
         }
 
         public DigitInt(byte[] digits, byte numBase, bool isNegative)
         {
-            Base = numBase;
+            Radix = numBase;
             Digits = digits;
             IsNegative = isNegative;
+            HandleLeadingZeroes();
         }
 
         public DigitInt(int value)
         {
-            Base = 10;
+            Radix = 10;
             
             if (value < 0)
             {
@@ -74,15 +76,17 @@ namespace DigitMath
 
             var numbers = new Queue<byte>();
 
-            for (; value > 0; value /= Base)
-                numbers.Enqueue((byte)(value % Base));
+            for (; value > 0; value /= Radix)
+                numbers.Enqueue((byte)(value % Radix));
 
             Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+
+            HandleLeadingZeroes();
         }
 
         public DigitInt(int value, int radix)
         {
-            Base = (byte)radix;
+            Radix = (byte)radix;
 
             if (value < 0)
             {
@@ -96,10 +100,12 @@ namespace DigitMath
 
             var numbers = new Queue<byte>();
 
-            for (; value > 0; value /= Base)
-                numbers.Enqueue((byte)(value % Base));
+            for (; value > 0; value /= Radix)
+                numbers.Enqueue((byte)(value % Radix));
 
             Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+
+            HandleLeadingZeroes();
         }
         #endregion
 
@@ -173,6 +179,37 @@ namespace DigitMath
         }
 
         /// <summary>
+        /// Determines whether <paramref name="left"/> is bigger than or equal to <paramref name="right"/>.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to compare.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c>, if <paramref name="left"/> is bigger than or equal to <paramref name="right"/>, else <c>false</c>.
+        /// </returns>
+        public static bool operator >=(DigitInt left, DigitInt right)
+        {
+            if (left == null)
+                return false;
+
+            return (left.CompareTo(right) >= 0);
+        }
+
+        /// <summary>
+        /// Determines whether <paramref name="left"/> is smaller than or equal to <paramref name="right"/>.
+        /// </summary>
+        /// <param name="left">The left <see cref="DigitInt"/> to compare.</param>
+        /// <param name="right">The right <see cref="DigitInt"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c>, if <paramref name="left"/> is smaller than or equal to <paramref name="right"/>, else <c>false</c>.
+        /// </returns>
+        public static bool operator <=(DigitInt left, DigitInt right)
+        {
+            if (left == null)
+                return true;
+
+            return (left.CompareTo(right) <= 0);
+        }
+        /// <summary>
         /// Determines whether <paramref name="left"/> is equal to <paramref name="right"/>.
         /// </summary>
         /// <param name="left">The left <see cref="DigitInt"/> to compare.</param>
@@ -187,6 +224,7 @@ namespace DigitMath
 
             return left.Equals(right);
         }
+
         /// <summary>
         /// Determines whether <paramref name="left"/> is not equal to <paramref name="right"/>.
         /// </summary>
@@ -214,7 +252,7 @@ namespace DigitMath
         {
             if (obj is DigitInt d)
             {
-                return (Base == d.Base) && (IsNegative == d.IsNegative) 
+                return (Radix == d.Radix) && (IsNegative == d.IsNegative) 
                     && (Length == d.Length) && (Digits.SequenceEqual(d.Digits));
             }
 
@@ -233,8 +271,8 @@ namespace DigitMath
         /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
         public static DigitInt Add(DigitInt leftSummand, DigitInt rightSummand)
         {
-            if (leftSummand.Base != rightSummand.Base)
-                throw new FormatException($"The radixes of the two numbers ({leftSummand.Base} and {rightSummand.Base}) do not match.");
+            if (leftSummand.Radix != rightSummand.Radix)
+                throw new FormatException($"The radixes of the two numbers ({leftSummand.Radix} and {rightSummand.Radix}) do not match.");
 
             if (rightSummand.IsNegative)
                 return leftSummand - (-rightSummand);
@@ -242,7 +280,7 @@ namespace DigitMath
             if (leftSummand.IsNegative)
                 return rightSummand - (-leftSummand);
 
-            var addRadix = leftSummand.Base;
+            var addRadix = leftSummand.Radix;
             var resultDigits = new LinkedList<byte>();
             var overhead = 0;
             var maxLength = Math.Max(leftSummand.Length, rightSummand.Length);
@@ -299,8 +337,8 @@ namespace DigitMath
         /// <returns>The difference of <paramref name="minuend"/> and <paramref name="subtrahend"/>.</returns>
         public static DigitInt Sub(DigitInt minuend, DigitInt subtrahend)
         {
-            if (minuend.Base != subtrahend.Base)
-                throw new FormatException($"The base of the two numbers ({minuend.Base} and {subtrahend.Base}) do not match.");
+            if (minuend.Radix != subtrahend.Radix)
+                throw new FormatException($"The base of the two numbers ({minuend.Radix} and {subtrahend.Radix}) do not match.");
 
             if (subtrahend.IsNegative)
                 return minuend + (-subtrahend);
@@ -308,7 +346,7 @@ namespace DigitMath
             if (subtrahend > minuend)
                 return -(subtrahend - minuend);
 
-            var subBase = minuend.Base;
+            var subBase = minuend.Radix;
             var resultDigits = new LinkedList<byte>();
             var overhead = 0;
             var leftLength = minuend.Length;
@@ -394,6 +432,8 @@ namespace DigitMath
 
             product.IsNegative = left.IsNegative ^ right.IsNegative;
 
+            product.HandleLeadingZeroes();
+
             return product;
         }
         /// <summary>
@@ -416,7 +456,31 @@ namespace DigitMath
         /// <returns>The quotient of the division.</returns>
         public static DigitInt Div(DigitInt dividend, DigitInt divisor, out DigitInt remainder)
         {
-            throw new NotImplementedException();
+            if (dividend is null)
+                throw new ArgumentNullException("The dividend must not be null.");
+
+            if (divisor is null)
+                throw new ArgumentNullException("The divisor must not be null.");
+
+            if (divisor.IsZero())
+                throw new DivideByZeroException("The divisor must not be zero.");
+
+            if (dividend < 0)
+                return -Div(-dividend, divisor, out remainder);
+
+            if (divisor < 0)
+                return -Div(dividend, -divisor, out remainder);
+
+            var quotient = new DigitInt(0);
+            remainder = dividend;
+
+            while (remainder >= divisor)
+            {
+                remainder -= divisor;
+                quotient++;
+            }
+
+            return quotient;
         }
 
         /// <summary>
@@ -465,7 +529,7 @@ namespace DigitMath
         }
 
         /// <summary>y
-        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Base"/>;
+        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Radix"/>;
         /// </summary>
         /// <param name="value">The <see cref="DigitInt"/> to perform the left shift on.</param>
         /// <param name="shifts">The number of digits to shift the value by.</param>
@@ -490,7 +554,7 @@ namespace DigitMath
         }
 
         /// <summary>
-        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Base"/>;
+        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Radix"/>;
         /// </summary>
         /// <param name="value">The <see cref="DigitInt"/> to perform the left shift on.</param>
         /// <param name="shifts">The number of digits to shift the value by.</param>
@@ -501,7 +565,7 @@ namespace DigitMath
         }
 
         /// <summary>
-        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Base"/>;
+        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Radix"/>;
         /// </summary>
         /// <param name="value">The <see cref="DigitInt"/> to perform the right shift on.</param>
         /// <param name="shifts">The number of digits to shift the value by.</param>
@@ -525,7 +589,7 @@ namespace DigitMath
         }
 
         /// <summary>
-        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Base"/>;
+        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Radix"/>;
         /// </summary>
         /// <param name="value">The <see cref="DigitInt"/> to perform the right shift on.</param>
         /// <param name="shifts">The number of digits to shift the value by.</param>
@@ -679,9 +743,9 @@ namespace DigitMath
         /// </returns>
         public bool IsZero()
         {
-            foreach (var digitValue in Digits)
+            for (var i = 0; i < Length; i++)
             {
-                if (digitValue != 0)
+                if (GetMSD(i) != 0)
                     return false;
             }
 
@@ -701,7 +765,7 @@ namespace DigitMath
 
         public void SetBase(byte newBase)
         {
-            if (newBase == Base)
+            if (newBase == Radix)
                 return;
 
             throw new NotImplementedException();
@@ -709,7 +773,7 @@ namespace DigitMath
 
         protected void ToBase10()
         {
-            if (Base == 10)
+            if (Radix == 10)
                 return;
 
             throw new NotImplementedException();
@@ -717,8 +781,8 @@ namespace DigitMath
 
         protected void FromBase10(byte newBase)
         {
-            if (Base != 10)
-                throw new FormatException($"The number is in base {Base}, but has to be in base 10.");
+            if (Radix != 10)
+                throw new FormatException($"The number is in base {Radix}, but has to be in base 10.");
 
             throw new NotImplementedException();
         }
@@ -729,7 +793,7 @@ namespace DigitMath
         /// <returns>A copy of the <see cref="DigitInt"/>.</returns>
         public DigitInt Copy()
         {
-            return new DigitInt(Digits, Base, IsNegative);
+            return new DigitInt(Digits, Radix, IsNegative);
         }
 
         #region Accessors
@@ -747,9 +811,9 @@ namespace DigitMath
                 throw new IndexOutOfRangeException($"The index ({index}) must not be less than 0.");
 
             if (index >= Length)
-                return new Digit((byte)0, Base);
+                return new Digit((byte)0, Radix);
 
-            return new Digit(Digits[index], Base);
+            return new Digit(Digits[index], Radix);
         }
 
         /// <summary>
@@ -761,6 +825,46 @@ namespace DigitMath
         public Digit GetLSD()
         {
             return GetLSD(0);
+        }
+
+        /// <summary>
+        /// Sets the least significant <see cref="Digit"/> at the given index to the given value.
+        /// </summary>
+        /// <param name="index">The index of the <see cref="Digit"/> to set.</param>
+        /// <param name="value">The value to set the <see cref="Digit"/> to.</param>
+        public void SetLSD(Digit value, int index)
+        {
+            if (index < 0)
+                throw new IndexOutOfRangeException($"The index ({index}) must not be less than 0.");
+
+            if (value > Radix)
+                throw new InvalidOperationException($"The value ({value}) must not be greater than the radix of the DigitInt ({Radix}).");
+
+            if (index >= Length)
+            {
+                if (value == 0)
+                    return;
+
+                var dif = index - Length;
+
+                var newDigits = new byte[Digits.Length + dif];
+                Digits.CopyTo(newDigits, 0);
+                Digits = newDigits;                
+            }
+
+            Digits[index] = value;
+
+            if (index == Length - 1 && value == 0)
+                HandleLeadingZeroes();
+        }
+
+        /// <summary>
+        /// Sets the least significant <see cref="Digit"/> to the given value.
+        /// </summary>
+        /// <param name="value">The value to set the <see cref="Digit"/> to.</param>
+        public void SetLSD(Digit value)
+        {
+            SetLSD(value, 0);
         }
         #endregion
 
@@ -779,9 +883,9 @@ namespace DigitMath
                 throw new IndexOutOfRangeException($"The index ({index}) must not be greater  than or equal to the number of digits ({Length}).");
 
             if (index < 0)
-                return new Digit((byte)0, Base);
+                return new Digit((byte)0, Radix);
 
-            return new Digit(Digits[Length - index - 1], Base);
+            return new Digit(Digits[Length - index - 1], Radix);
         }
 
         /// <summary>
@@ -793,6 +897,70 @@ namespace DigitMath
         public Digit GetMSD()
         {
             return GetMSD(0);
+        }
+
+        /// <summary>
+        /// Sets the most significant <see cref="Digit"/> at the given index to the given value.
+        /// </summary>
+        /// <param name="index">The index of the <see cref="Digit"/> to set.</param>
+        /// <param name="value">The value to set the <see cref="Digit"/> to.</param>
+        public void SetMSD(Digit value, int index)
+        {
+            if (index >= Length)
+                throw new IndexOutOfRangeException($"The index ({index}) must not be greater  than or equal to the number of digits ({Length}).");
+
+            if (value > Radix)
+                throw new InvalidOperationException($"The value ({value}) must not be greater than the radix of the DigitInt ({Radix}).");
+
+            if (index < 0)
+            {
+                if (value == 0)
+                    return;
+
+                var dif = index - Length;
+
+                var newDigits = new byte[Digits.Length + dif];
+                Digits.CopyTo(newDigits, 0);
+                Digits = newDigits;
+
+                index += dif;
+            }
+
+            Digits[Length - index - 1] = value;
+
+            if (index == 0 && value == 0)
+                HandleLeadingZeroes();
+        }
+
+        /// <summary>
+        /// Sets the least significant <see cref="Digit"/> to the given value.
+        /// </summary>
+        /// <param name="value">The value to set the <see cref="Digit"/> to.</param>
+        public void SetMSD(Digit value)
+        {
+            SetMSD(value, 0);
+        }
+
+        /// <summary>
+        /// Removes leading zeroes from the digits.
+        /// </summary>
+        protected void HandleLeadingZeroes()
+        {
+            var zeroCount = 0;
+
+            for (var i = 0; i < Length - 1; i++)
+            {
+                if (GetMSD(i) == 0)
+                    zeroCount++;
+                else
+                    break;
+            }
+
+            if (zeroCount > 0)
+            {
+                var newDigits = Digits.Take(Length - zeroCount).ToArray();
+                Digits = newDigits;
+            }
         }
         #endregion
         #endregion
@@ -986,7 +1154,7 @@ namespace DigitMath
 
             for (var i = Length - 1; i >= 0; i--)
             {
-                result *= Base;
+                result *= Radix;
                 result += Digits[i];
             }
 

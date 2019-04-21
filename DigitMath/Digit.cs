@@ -6,36 +6,36 @@ namespace DigitMath
     {
         #region Attributes
         byte Value { get; set; }
-        byte Base { get; set; }
+        public byte Radix { get; set; }
         #endregion
 
         #region Constructors
         public Digit(byte value)
         {
-            Base = 10;
+            Radix = 10;
 
             if (value > 9)
-                throw new ArgumentOutOfRangeException($"The value must be lower than {Base}.");
+                throw new ArgumentOutOfRangeException($"The value must be lower than {Radix}.");
 
             Value = value;
         }
 
         public Digit(byte value, byte numBase)
         {
-            Base = numBase;
+            Radix = numBase;
 
             if (value >= numBase)
-                throw new ArgumentOutOfRangeException($"The value must be lower than {Base}");
+                throw new ArgumentOutOfRangeException($"The value must be lower than {Radix}");
 
             Value = value;
         }
 
         public Digit(int value)
         {
-            Base = 10;
+            Radix = 10;
 
             if (value < 0 || value > 9)
-                throw new ArgumentOutOfRangeException($"The value must be between 0 and {Base}.");
+                throw new ArgumentOutOfRangeException($"The value must be between 0 and {Radix}.");
 
             Value = (byte)value;
         }
@@ -45,10 +45,10 @@ namespace DigitMath
             if (numBase < 0 || numBase > 255)
                 throw new ArgumentOutOfRangeException("The numBase must be between 0 and 255.");
 
-            Base = (byte)numBase;
+            Radix = (byte)numBase;
 
             if (value < 0 || value >= numBase)
-                throw new ArgumentOutOfRangeException($"The value must be between 0 and {Base}");
+                throw new ArgumentOutOfRangeException($"The value must be between 0 and {Radix}");
 
             Value = (byte)value;
         }

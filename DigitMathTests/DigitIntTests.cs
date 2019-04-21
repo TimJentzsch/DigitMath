@@ -124,6 +124,26 @@ namespace DigitMathTests
         }
 
         [TestMethod]
+        public void TestDiv()
+        {
+            TestDivHelper(15, 5);
+            TestDivHelper(333, 12);
+            TestDivHelper(49, -7);
+            TestDivHelper(-49, 7);
+            TestDivHelper(-49, -7);
+        }
+
+        public void TestDivHelper(int dividend, int divisor)
+        {
+            var left = new DigitInt(dividend);
+            var right = new DigitInt(divisor);
+            var quotient = new DigitInt(dividend / divisor);
+            var modus = new DigitInt(dividend % divisor);
+            Assert.AreEqual(quotient, left / right, $"{left / right}");
+            Assert.AreEqual(modus, left % right, $"{left % right}");
+        }
+
+        [TestMethod]
         public void TestShiftLeft()
         {
             TestShiftLeftHelper(3, 3, 3000);
