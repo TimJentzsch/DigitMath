@@ -16,13 +16,7 @@ namespace DigitMath
         #region Indexers
         public Digit this[int index]
         {
-            get
-            {
-                if (index < 0 || index >= Digits.Length)
-                    throw new IndexOutOfRangeException($"The index ({index}) must be between 0 and {Digits.Length - 1}");
-
-                return new Digit(Digits[index], Base);
-            }
+            get => GetLSD(index);
         }
         #endregion
         /// <summary>
@@ -78,10 +72,32 @@ namespace DigitMath
                 IsNegative = false;
             }
 
-            var numbers = new Stack<byte>();
+            var numbers = new Queue<byte>();
 
             for (; value > 0; value /= Base)
-                numbers.Push((byte)(value % Base));
+                numbers.Enqueue((byte)(value % Base));
+
+            Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+        }
+
+        public DigitInt(int value, int radix)
+        {
+            Base = (byte)radix;
+
+            if (value < 0)
+            {
+                IsNegative = true;
+                value = -value;
+            }
+            else
+            {
+                IsNegative = false;
+            }
+
+            var numbers = new Queue<byte>();
+
+            for (; value > 0; value /= Base)
+                numbers.Enqueue((byte)(value % Base));
 
             Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
         }
@@ -117,8 +133,8 @@ namespace DigitMath
 
             for (var i = 0; i < Length; i++)
             {
-                if (this[i].CompareTo(other[i]) != 0)
-                    return this[i].CompareTo(other[i]);
+                if (GetMSD(i).CompareTo(other.GetMSD(i)) != 0)
+                    return GetMSD(i).CompareTo(other.GetMSD(i));
             }
 
             return 0;
@@ -198,7 +214,8 @@ namespace DigitMath
         {
             if (obj is DigitInt d)
             {
-                return (Base == d.Base) && (IsNegative == d.IsNegative) && (Digits.SequenceEqual(d.Digits));
+                return (Base == d.Base) && (IsNegative == d.IsNegative) 
+                    && (Length == d.Length) && (Digits.SequenceEqual(d.Digits));
             }
 
             return false;
@@ -211,57 +228,55 @@ namespace DigitMath
         /// <summary>
         /// Adds two <see cref="DigitInt"/>s.
         /// </summary>
-        /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
-        /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
+        /// <param name="leftSummand">The left <see cref="DigitInt"/> to add.</param>
+        /// <param name="rightSummand">The right <see cref="DigitInt"/> to add.</param>
         /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
-        public static DigitInt Add(DigitInt left, DigitInt right)
+        public static DigitInt Add(DigitInt leftSummand, DigitInt rightSummand)
         {
-            if (left.Base != right.Base)
-                throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
+            if (leftSummand.Base != rightSummand.Base)
+                throw new FormatException($"The radixes of the two numbers ({leftSummand.Base} and {rightSummand.Base}) do not match.");
 
-            if (right.IsNegative)
-                return left - (-right);
+            if (rightSummand.IsNegative)
+                return leftSummand - (-rightSummand);
 
-            if (left.IsNegative)
-                return right - (-left);
+            if (leftSummand.IsNegative)
+                return rightSummand - (-leftSummand);
 
-            var addBase = left.Base;
+            var addRadix = leftSummand.Base;
             var resultDigits = new LinkedList<byte>();
             var overhead = 0;
-            var leftLength = left.Length;
-            var rightLength = right.Length;
-            var maxLength = Math.Max(leftLength, rightLength);
+            var maxLength = Math.Max(leftSummand.Length, rightSummand.Length);
 
-            for (var i = 1; i <= maxLength || overhead != 0; i++)
+            for (var i = 0; i < maxLength || overhead != 0; i++)
             {
-                var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
-                var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
+                var leftVal = leftSummand.GetLSD(i);
+                var rightVal = rightSummand.GetLSD(i);
                 var fullValue = (ushort)((ushort)leftVal + (ushort)rightVal + (ushort)overhead);
-                var nextValue = fullValue;
+                var nextDigit = fullValue;
 
                 overhead = 0;
 
-                if (fullValue >= addBase)
+                if (fullValue >= addRadix)
                 {
-                    nextValue = (byte)(fullValue % addBase);
-                    overhead = (fullValue - nextValue) / addBase;
+                    nextDigit = (byte)(fullValue % addRadix);
+                    overhead = (fullValue - nextDigit) / addRadix;
                 }
 
-                resultDigits.AddFirst((byte)nextValue);
+                resultDigits.AddLast((byte)nextDigit);
             }
 
-            return new DigitInt(resultDigits.ToArray(), addBase, false);
+            return new DigitInt(resultDigits.ToArray(), addRadix, false);
         }
 
         /// <summary>
         /// Adds two <see cref="DigitInt"/>s.
         /// </summary>
-        /// <param name="left">The left <see cref="DigitInt"/> to add.</param>
-        /// <param name="right">The right <see cref="DigitInt"/> to add.</param>
+        /// <param name="leftSummand">The left <see cref="DigitInt"/> to add.</param>
+        /// <param name="rightSummand">The right <see cref="DigitInt"/> to add.</param>
         /// <returns>The sum of the two <see cref="DigitInt"/>s.</returns>
-        public static DigitInt operator +(DigitInt left, DigitInt right)
+        public static DigitInt operator +(DigitInt leftSummand, DigitInt rightSummand)
         {
-            return Add(left, right);
+            return Add(leftSummand, rightSummand);
         }
 
         /// <summary>
@@ -277,47 +292,47 @@ namespace DigitMath
 
         #region Subtraction
         /// <summary>
-        /// Determines the difference of <paramref name="left"/> and <paramref name="right"/>.
+        /// Determines the difference of <paramref name="minuend"/> and <paramref name="subtrahend"/>.
         /// </summary>
-        /// <param name="left">The left <see cref="DigitInt"/> to subtract.</param>
-        /// <param name="right">The right <see cref="DigitInt"/> to subtract.</param>
-        /// <returns>The difference of <paramref name="left"/> and <paramref name="right"/>.</returns>
-        public static DigitInt Sub(DigitInt left, DigitInt right)
+        /// <param name="minuend">The left <see cref="DigitInt"/> to subtract.</param>
+        /// <param name="subtrahend">The right <see cref="DigitInt"/> to subtract.</param>
+        /// <returns>The difference of <paramref name="minuend"/> and <paramref name="subtrahend"/>.</returns>
+        public static DigitInt Sub(DigitInt minuend, DigitInt subtrahend)
         {
-            if (left.Base != right.Base)
-                throw new FormatException($"The base of the two numbers ({left.Base} and {right.Base}) do not match.");
+            if (minuend.Base != subtrahend.Base)
+                throw new FormatException($"The base of the two numbers ({minuend.Base} and {subtrahend.Base}) do not match.");
 
-            if (right.IsNegative)
-                return left + (-right);
+            if (subtrahend.IsNegative)
+                return minuend + (-subtrahend);
 
-            if (right > left)
-                return -(right - left);
+            if (subtrahend > minuend)
+                return -(subtrahend - minuend);
 
-            var subBase = left.Base;
+            var subBase = minuend.Base;
             var resultDigits = new LinkedList<byte>();
             var overhead = 0;
-            var leftLength = left.Length;
-            var rightLength = right.Length;
+            var leftLength = minuend.Length;
+            var rightLength = subtrahend.Length;
 
-            for (var i = 1; i <= Math.Max(leftLength, rightLength); i++)
+            for (var i = 0; i < Math.Max(leftLength, rightLength); i++)
             {
-                var leftVal = (leftLength - i) < 0 ? 0 : (ushort)left[leftLength - i];
-                var rightVal = (rightLength - i) < 0 ? 0 : (ushort)right[rightLength - i];
+                var leftVal = minuend.GetLSD(i);
+                var rightVal = subtrahend.GetLSD(i);
 
-                var minuend = leftVal;
-                var subtrahend = (ushort)rightVal + (ushort)overhead;
+                var minuendDigit = (ushort)leftVal;
+                var subtrahendDigit = (ushort)rightVal + (ushort)overhead;
 
                 overhead = 0;
 
-                if (subtrahend > minuend)
+                if (subtrahendDigit > minuendDigit)
                 {
                     overhead = 1;
-                    minuend += subBase;
+                    minuendDigit += subBase;
                 }
 
-                var nextValue = (ushort)(minuend - subtrahend);
+                var nextValue = (ushort)(minuendDigit - subtrahendDigit);
 
-                resultDigits.AddFirst((byte)nextValue);
+                resultDigits.AddLast((byte)nextValue);
             }
 
             return new DigitInt(resultDigits.ToArray(), subBase, false);
@@ -468,7 +483,7 @@ namespace DigitMath
 
             var newValue = value.Copy();
             var newDigits = new byte[newValue.Digits.Length + shifts];
-            value.Digits.CopyTo(newDigits, 0);
+            value.Digits.CopyTo(newDigits, shifts);
             newValue.Digits = newDigits;
 
             return newValue;
@@ -503,7 +518,7 @@ namespace DigitMath
                 return new DigitInt(0);
 
             var newValue = value.Copy();
-            var newDigits = value.Digits.Take(newValue.Digits.Length - shifts).ToArray();
+            var newDigits = value.Digits.Reverse().Take(newValue.Digits.Length - shifts).Reverse().ToArray();
             newValue.Digits = newDigits;
 
             return newValue;
@@ -717,6 +732,71 @@ namespace DigitMath
             return new DigitInt(Digits, Base, IsNegative);
         }
 
+        #region Accessors
+        #region Least Significant Digit
+        /// <summary>
+        /// Gets a <see cref="Digit"/> of the <see cref="DigitInt"/>, starting at the least significant <see cref="Digit"/>.
+        /// </summary>
+        /// <param name="index">The index of the <see cref="Digit"/>, starting at the least significant <see cref="Digit"/>.</param>
+        /// <returns>
+        /// The <see cref="Digit"/> at the position <paramref name="index"/>, starting at the least significant <see cref="Digit"/>.
+        /// </returns>
+        public Digit GetLSD(int index)
+        {
+            if (index < 0)
+                throw new IndexOutOfRangeException($"The index ({index}) must not be less than 0.");
+
+            if (index >= Length)
+                return new Digit((byte)0, Base);
+
+            return new Digit(Digits[index], Base);
+        }
+
+        /// <summary>
+        /// Gets the least significant <see cref="Digit"/> of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>
+        /// The least significant <see cref="Digit"/> of the <see cref="DigitInt"/>.
+        /// </returns>
+        public Digit GetLSD()
+        {
+            return GetLSD(0);
+        }
+        #endregion
+
+        #region Most Significant Digit
+        /// <summary>
+        /// Gets a <see cref="Digit"/> of the <see cref="DigitInt"/>, starting at the most significant <see cref="Digit"/>.
+        /// </summary>
+        /// <param name="index">The index of the <see cref="Digit"/>, starting at the most significant <see cref="Digit"/>.</param>
+        /// <returns>
+        /// The <see cref="Digit"/> at the position <paramref name="index"/>, 
+        /// starting at the most significant <see cref="Digit"/>.
+        /// </returns>
+        public Digit GetMSD(int index)
+        {
+            if (index >= Length)
+                throw new IndexOutOfRangeException($"The index ({index}) must not be greater  than or equal to the number of digits ({Length}).");
+
+            if (index < 0)
+                return new Digit((byte)0, Base);
+
+            return new Digit(Digits[Length - index - 1], Base);
+        }
+
+        /// <summary>
+        /// Gets the most significant <see cref="Digit"/> of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>
+        /// The most significant <see cref="Digit"/> of the <see cref="DigitInt"/>.
+        /// </returns>
+        public Digit GetMSD()
+        {
+            return GetMSD(0);
+        }
+        #endregion
+        #endregion
+
         #region Conversions
         #region Implicit
         #region ToDigitInt
@@ -927,9 +1007,9 @@ namespace DigitMath
             if (IsNegative)
                 str.Append("-");
 
-            foreach (var digit in Digits)
+            for (var i = 0; i < Length; i++)
             {
-                str.Append(Digit.ToChar(digit));
+                str.Append(Digit.ToChar(GetMSD(i)));
             }
 
             return str.ToString();

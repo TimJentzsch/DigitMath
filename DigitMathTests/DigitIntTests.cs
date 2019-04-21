@@ -27,7 +27,7 @@ namespace DigitMathTests
             var num2 = new DigitInt(0);
             Assert.AreEqual(num1, num2, "0 not created equally");
 
-            num1 = new DigitInt(new byte[] { 1, 2, 3 });
+            num1 = new DigitInt(new byte[] { 3, 2, 1 });
             num2 = new DigitInt(123);
             Assert.AreEqual(num1, num2, $"123 not created equally: {num1} | {num2}");
         }
@@ -37,45 +37,22 @@ namespace DigitMathTests
         [TestMethod]
         public void TestAdd()
         {
-            var left = new DigitInt(1);
-            var right = new DigitInt(2);
-            Assert.AreEqual(new DigitInt(3), left + right,
-                $"{left} + {right}");
+            TestAddHelper(1, 2);
+            TestAddHelper(55, 202);
+            TestAddHelper(1332, 99);
+            TestAddHelper(-1332, 99);
+            TestAddHelper(1332, -99);
+            TestAddHelper(-1332, -99);
+            TestAddHelper(0, 4);
+            TestAddHelper(7, 7);
+        }
 
-            left = new DigitInt(55);
-            right = new DigitInt(202);
-            Assert.AreEqual(new DigitInt(257), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(1332);
-            right = new DigitInt(99);
-            Assert.AreEqual(new DigitInt(1431), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(-1332);
-            right = new DigitInt(99);
-            Assert.AreEqual(new DigitInt(-1233), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(1332);
-            right = new DigitInt(-99);
-            Assert.AreEqual(new DigitInt(1233), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(-1332);
-            right = new DigitInt(-99);
-            Assert.AreEqual(new DigitInt(-1431), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(0);
-            right = new DigitInt(4);
-            Assert.AreEqual(new DigitInt(4), left + right,
-                $"{left} + {right}");
-
-            left = new DigitInt(7);
-            right = new DigitInt(7);
-            Assert.AreEqual(new DigitInt(14), left + right,
-                $"{left} + {right}");
+        void TestAddHelper(int leftSummand, int rightSummand)
+        {
+            var left = new DigitInt(leftSummand);
+            var right = new DigitInt(rightSummand);
+            var sum = new DigitInt(leftSummand + rightSummand);
+            Assert.AreEqual(sum, left + right, $"{leftSummand} + {rightSummand}");
         }
 
         [TestMethod]
@@ -111,125 +88,79 @@ namespace DigitMathTests
         [TestMethod]
         public void TestSub()
         {
-            var left = new DigitInt(7);
-            var right = new DigitInt(5);
-            Assert.AreEqual(new DigitInt(2), left - right, $"{left} - {right}");
+            TestSubHelper(7, 5);
+            TestSubHelper(55, 202);
+            TestSubHelper(1332, 99);
+            TestSubHelper(-1332, 99);
+            TestSubHelper(1332, -99);
+            TestSubHelper(-1332, -99);
+        }
 
-            left = new DigitInt(55);
-            right = new DigitInt(202);
-            Assert.AreEqual(new DigitInt(-147), left - right, $"{left} - {right}");
-
-            left = new DigitInt(1332);
-            right = new DigitInt(99);
-            Assert.AreEqual(new DigitInt(1233), left - right, $"{left} - {right}");
-
-            left = new DigitInt(-1332);
-            right = new DigitInt(99);
-            Assert.AreEqual(new DigitInt(-1431), left - right, $"{left} - {right}");
-
-            left = new DigitInt(1332);
-            right = new DigitInt(-99);
-            Assert.AreEqual(new DigitInt(1431), left - right, $"{left} - {right}");
-
-            left = new DigitInt(-1332);
-            right = new DigitInt(-99);
-            Assert.AreEqual(new DigitInt(-1233), left - right, $"{left} - {right}");
+        void TestSubHelper(int minuend, int subtrahend)
+        {
+            var left = new DigitInt(minuend);
+            var right = new DigitInt(subtrahend);
+            var dif = new DigitInt(minuend - subtrahend);
+            Assert.AreEqual(dif, left - right, $"{left} - {right}");
         }
 
         [TestMethod]
         public void TestMult()
         {
-            var left = new DigitInt(7);
-            var right = new DigitInt(5);
-            Assert.AreEqual(new DigitInt(35), left * right, $"{left} * {right}");
+            TestMultHelper(7, 5);
+            TestMultHelper(6, 92);
+            TestMultHelper(92, 6);
+            TestMultHelper(-9, 202);
+            TestMultHelper(-202, 9);
+            TestMultHelper(-55, -202);
+        }
 
-            left = new DigitInt(6);
-            right = new DigitInt(92);
-            Assert.AreEqual(new DigitInt(552), left * right, $"{left} * {right}");
-
-            left = new DigitInt(92);
-            right = new DigitInt(6);
-            Assert.AreEqual(new DigitInt(552), left * right, $"{left} * {right}");
-
-            left = new DigitInt(-9);
-            right = new DigitInt(202);
-            Assert.AreEqual(new DigitInt(-1818), left * right, $"{left} * {right}");
-
-            left = new DigitInt(-202);
-            right = new DigitInt(9);
-            Assert.AreEqual(new DigitInt(-1818), left * right, $"{left} * {right}");
-
-            left = new DigitInt(-55);
-            right = new DigitInt(-202);
-            Assert.AreEqual(new DigitInt(11110), left * right, $"{left} * {right}");
+        public void TestMultHelper(int leftFactor, int rightFactor)
+        {
+            var left = new DigitInt(leftFactor);
+            var right = new DigitInt(rightFactor);
+            var product = new DigitInt(leftFactor * rightFactor);
+            Assert.AreEqual(product, left * right, $"{leftFactor * rightFactor}");
         }
 
         [TestMethod]
         public void TestShiftLeft()
         {
-            var value = new DigitInt(3);
-            var result = value << 3;
-            Assert.AreEqual(new DigitInt(3000), result, $"{value} << 3");
-            Assert.AreEqual(4, result.Length, $"Length of {value} << 3");
+            TestShiftLeftHelper(3, 3, 3000);
+            TestShiftLeftHelper(0, 3, 0);
+            TestShiftLeftHelper(2672, 2, 267200);
+            TestShiftLeftHelper(369, 0, 369);
+            TestShiftLeftHelper(178, -1, 17);
+            TestShiftLeftHelper(369, -5, 0);
+        }
 
-            value = new DigitInt(0);
-            result = value << 3;
-            Assert.AreEqual(new DigitInt(0), result, $"{value} << 3");
-            Assert.AreEqual(1, result.Length, $"Length of {value} << 3");
-
-            value = new DigitInt(2672);
-            result = value << 2;
-            Assert.AreEqual(new DigitInt(267200), result, $"{value} << 2");
-            Assert.AreEqual(6, result.Length, $"Length of {value} << 2");
-
-            value = new DigitInt(369);
-            result = value << 0;
-            Assert.AreEqual(new DigitInt(369), result, $"{value} << 0");
-            Assert.AreEqual(3, result.Length, $"Length of {value} << 0");
-
-            value = new DigitInt(178);
-            result = value << -1;
-            Assert.AreEqual(new DigitInt(17), result, $"{value} << -1");
-            Assert.AreEqual(2, result.Length, $"Length of {value} << -1");
-
-            value = new DigitInt(369);
-            result = value << -5;
-            Assert.AreEqual(new DigitInt(0), result, $"{value} << -5");
-            Assert.AreEqual(1, result.Length, $"Length of {value} << -5");
+        public void TestShiftLeftHelper(int value, int shifts, int expected)
+        {
+            var digitInt = new DigitInt(value);
+            var exp = new DigitInt(expected);
+            var actual = digitInt << shifts;
+            Assert.AreEqual(exp, actual, $"{value} << {shifts}");
+            Assert.AreEqual(exp.Length, actual.Length, $"Length of ({value} << {shifts})");
         }
 
         [TestMethod]
         public void TestShiftRight()
         {
-            var value = new DigitInt(3000);
-            var result = value >> 5;
-            Assert.AreEqual(new DigitInt(0), result, $"{value} >> 5");
-            Assert.AreEqual(1, result.Length, $"Length of {value} >> 5");
+            TestShiftRightHelper(3000, 5, 0);
+            TestShiftRightHelper(0, 3, 0);
+            TestShiftRightHelper(2672, 2, 26);
+            TestShiftRightHelper(369, 0, 369);
+            TestShiftRightHelper(178, -1, 1780);
+            TestShiftRightHelper(369, -5, 36900000);
+        }
 
-            value = new DigitInt(0);
-            result = value >> 3;
-            Assert.AreEqual(new DigitInt(0), result, $"{value} >> 3");
-            Assert.AreEqual(1, result.Length, $"Length of {value} >> 3");
-
-            value = new DigitInt(2672);
-            result = value >> 2;
-            Assert.AreEqual(new DigitInt(26), result, $"{value} >> 2");
-            Assert.AreEqual(2, result.Length, $"Length of {value} >> 2");
-
-            value = new DigitInt(369);
-            result = value >> 0;
-            Assert.AreEqual(new DigitInt(369), result, $"{value} >> 0");
-            Assert.AreEqual(3, result.Length, $"Length of {value} >> 0");
-
-            value = new DigitInt(178);
-            result = value >> -1;
-            Assert.AreEqual(new DigitInt(1780), result, $"{value} >> -1");
-            Assert.AreEqual(4, result.Length, $"Length of {value} >> -1");
-
-            value = new DigitInt(369);
-            result = value >> -5;
-            Assert.AreEqual(new DigitInt(36900000), result, $"{value} >> -5");
-            Assert.AreEqual(8, result.Length, $"Length of {value} >> -5");
+        public void TestShiftRightHelper(int value, int shifts, int expected)
+        {
+            var digitInt = new DigitInt(value);
+            var exp = new DigitInt(expected);
+            var actual = digitInt >> shifts;
+            Assert.AreEqual(exp, actual, $"{value} >> {shifts}");
+            Assert.AreEqual(exp.Length, actual.Length, $"Length of ({value} >> {shifts})");
         }
 
         [TestMethod]
@@ -263,10 +194,10 @@ namespace DigitMathTests
         [TestMethod]
         public void TestToString()
         {
-            var num = new DigitInt(new byte[] { 1, 2, 3 });
+            var num = new DigitInt(123);
             Assert.AreEqual("123", num.ToString());
 
-            num = new DigitInt(new byte[] { 10, 3, 15 });
+            num = new DigitInt(2623, 16);
             Assert.AreEqual("A3F", num.ToString());
         }
         #endregion
