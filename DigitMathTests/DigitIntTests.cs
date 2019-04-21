@@ -165,6 +165,74 @@ namespace DigitMathTests
         }
 
         [TestMethod]
+        public void TestShiftLeft()
+        {
+            var value = new DigitInt(3);
+            var result = value << 3;
+            Assert.AreEqual(new DigitInt(3000), result, $"{value} << 3");
+            Assert.AreEqual(4, result.Length, $"Length of {value} << 3");
+
+            value = new DigitInt(0);
+            result = value << 3;
+            Assert.AreEqual(new DigitInt(0), result, $"{value} << 3");
+            Assert.AreEqual(1, result.Length, $"Length of {value} << 3");
+
+            value = new DigitInt(2672);
+            result = value << 2;
+            Assert.AreEqual(new DigitInt(267200), result, $"{value} << 2");
+            Assert.AreEqual(6, result.Length, $"Length of {value} << 2");
+
+            value = new DigitInt(369);
+            result = value << 0;
+            Assert.AreEqual(new DigitInt(369), result, $"{value} << 0");
+            Assert.AreEqual(3, result.Length, $"Length of {value} << 0");
+
+            value = new DigitInt(178);
+            result = value << -1;
+            Assert.AreEqual(new DigitInt(17), result, $"{value} << -1");
+            Assert.AreEqual(2, result.Length, $"Length of {value} << -1");
+
+            value = new DigitInt(369);
+            result = value << -5;
+            Assert.AreEqual(new DigitInt(0), result, $"{value} << -5");
+            Assert.AreEqual(1, result.Length, $"Length of {value} << -5");
+        }
+
+        [TestMethod]
+        public void TestShiftRight()
+        {
+            var value = new DigitInt(3000);
+            var result = value >> 5;
+            Assert.AreEqual(new DigitInt(0), result, $"{value} >> 5");
+            Assert.AreEqual(1, result.Length, $"Length of {value} >> 5");
+
+            value = new DigitInt(0);
+            result = value >> 3;
+            Assert.AreEqual(new DigitInt(0), result, $"{value} >> 3");
+            Assert.AreEqual(1, result.Length, $"Length of {value} >> 3");
+
+            value = new DigitInt(2672);
+            result = value >> 2;
+            Assert.AreEqual(new DigitInt(26), result, $"{value} >> 2");
+            Assert.AreEqual(2, result.Length, $"Length of {value} >> 2");
+
+            value = new DigitInt(369);
+            result = value >> 0;
+            Assert.AreEqual(new DigitInt(369), result, $"{value} >> 0");
+            Assert.AreEqual(3, result.Length, $"Length of {value} >> 0");
+
+            value = new DigitInt(178);
+            result = value >> -1;
+            Assert.AreEqual(new DigitInt(1780), result, $"{value} >> -1");
+            Assert.AreEqual(4, result.Length, $"Length of {value} >> -1");
+
+            value = new DigitInt(369);
+            result = value >> -5;
+            Assert.AreEqual(new DigitInt(36900000), result, $"{value} >> -5");
+            Assert.AreEqual(8, result.Length, $"Length of {value} >> -5");
+        }
+
+        [TestMethod]
         public void TestCompareTo()
         {
             var left = new DigitInt(7);

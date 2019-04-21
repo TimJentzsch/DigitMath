@@ -391,6 +391,134 @@ namespace DigitMath
         {
             return Mult(left, right);
         }
+
+        /// <summary>
+        /// Divides two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="dividend">The dividend of the division.</param>
+        /// <param name="divisor">The divisor of the division.</param>
+        /// <param name="remainder">The remainder of the division.</param>
+        /// <returns>The quotient of the division.</returns>
+        public static DigitInt Div(DigitInt dividend, DigitInt divisor, out DigitInt remainder)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Divides two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="dividend">The dividend of the division.</param>
+        /// <param name="divisor">The divisor of the division.</param>
+        /// <returns>The quotient of the division.</returns>
+        public static DigitInt Div(DigitInt dividend, DigitInt divisor)
+        {
+            return Div(dividend, divisor, out _);
+        }
+
+        /// <summary>
+        /// Divides two <see cref="DigitInt"/>s.
+        /// </summary>
+        /// <param name="dividend">The dividend of the division.</param>
+        /// <param name="divisor">The divisor of the division.</param>
+        /// <returns>The quotient of the division.</returns>
+        public static DigitInt operator /(DigitInt dividend, DigitInt divisor)
+        {
+            return Div(dividend, divisor);
+        }
+
+        /// <summary>
+        /// Determines the modulo (remainder) of a division.
+        /// </summary>
+        /// <param name="dividend">The dividend of the division.</param>
+        /// <param name="divisor">The divisor of the division.</param>
+        /// <returns>The remainder of the division.</returns>
+        public static DigitInt Mod(DigitInt dividend, DigitInt divisor)
+        {
+            Div(dividend, divisor, out var remainder);
+            return remainder;
+        }
+
+        /// <summary>
+        /// Determines the modulo (remainder) of a division.
+        /// </summary>
+        /// <param name="dividend">The dividend of the division.</param>
+        /// <param name="divisor">The divisor of the division.</param>
+        /// <returns>The remainder of the division.</returns>
+        public static DigitInt operator %(DigitInt dividend, DigitInt divisor)
+        {
+            return Mod(dividend, divisor);
+        }
+
+        /// <summary>y
+        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Base"/>;
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to perform the left shift on.</param>
+        /// <param name="shifts">The number of digits to shift the value by.</param>
+        /// <returns>The left shifted <see cref="DigitInt"/>.</returns>
+        public static DigitInt ShiftLeft(DigitInt value, int shifts)
+        {
+            if (value is null)
+                throw new ArgumentNullException("The value may not be null.");
+
+            if (shifts < 0)
+                return ShiftRight(value, -shifts);
+
+            if (value.IsZero())
+                return new DigitInt(0);
+
+            var newValue = value.Copy();
+            var newDigits = new byte[newValue.Digits.Length + shifts];
+            value.Digits.CopyTo(newDigits, 0);
+            newValue.Digits = newDigits;
+
+            return newValue;
+        }
+
+        /// <summary>
+        /// Performs a left shift on the <paramref name="value"/>. Equal to a multiplication by the <see cref="Base"/>;
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to perform the left shift on.</param>
+        /// <param name="shifts">The number of digits to shift the value by.</param>
+        /// <returns>The left shifted <see cref="DigitInt"/>.</returns>
+        public static DigitInt operator <<(DigitInt value, int shifts)
+        {
+            return ShiftLeft(value, shifts);
+        }
+
+        /// <summary>
+        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Base"/>;
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to perform the right shift on.</param>
+        /// <param name="shifts">The number of digits to shift the value by.</param>
+        /// <returns>The right shifted <see cref="DigitInt"/>.</returns>
+        public static DigitInt ShiftRight(DigitInt value, int shifts)
+        {
+            if (value is null)
+                throw new ArgumentNullException("The value may not be null.");
+
+            if (shifts < 0)
+                return ShiftLeft(value, -shifts);
+
+            if (shifts >= value.Length)
+                return new DigitInt(0);
+
+            var newValue = value.Copy();
+            var newDigits = value.Digits.Take(newValue.Digits.Length - shifts).ToArray();
+            newValue.Digits = newDigits;
+
+            return newValue;
+        }
+
+        /// <summary>
+        /// Performs a right shift on the <paramref name="value"/>. Equal to a division by the <see cref="Base"/>;
+        /// </summary>
+        /// <param name="value">The <see cref="DigitInt"/> to perform the right shift on.</param>
+        /// <param name="shifts">The number of digits to shift the value by.</param>
+        /// <returns>The right shifted <see cref="DigitInt"/>.</returns>
+        public static DigitInt operator >>(DigitInt value, int shifts)
+        {
+            return ShiftRight(value, shifts);
+        }
         #endregion
         #endregion
 
@@ -526,6 +654,23 @@ namespace DigitMath
             var absolute = Copy();
             absolute.IsNegative = false;
             return absolute;
+        }
+
+        /// <summary>
+        /// Determines whether the <see cref="DigitInt"/> represents the value <c>0</c>.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c>, if the <see cref="DigitInt"/> represents the value <c>0</c>, else <c>false</c>.
+        /// </returns>
+        public bool IsZero()
+        {
+            foreach (var digitValue in Digits)
+            {
+                if (digitValue != 0)
+                    return false;
+            }
+
+            return true;
         }
         #endregion
 
