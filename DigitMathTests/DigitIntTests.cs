@@ -227,6 +227,36 @@ namespace DigitMathTests
         }
 
         [TestMethod]
+        public void TestDigitSum()
+        {
+            TestDigitSumHelper(123456789, 45);
+            TestDigitSumHelper(6702, 15);
+        }
+
+        public void TestDigitSumHelper(int value, int digitSum)
+        {
+            var digitVal = new DigitInt(value);
+            var expectedSum = new DigitInt(digitSum);
+            var actualSum = digitVal.DigitSum();
+            Assert.AreEqual(expectedSum, actualSum, $"DigitSum ({value})");
+        }
+
+        [TestMethod]
+        public void TestDigitProduct()
+        {
+            TestDigitProductHelper(123456789, 362880);
+            TestDigitProductHelper(6702, 0);
+        }
+
+        public void TestDigitProductHelper(int value, int digitProduct)
+        {
+            var digitVal = new DigitInt(value);
+            var expectedProduct = new DigitInt(digitProduct);
+            var actualProduct = digitVal.DigitProduct();
+            Assert.AreEqual(expectedProduct, actualProduct, $"DigitProduct ({value})");
+        }
+
+        [TestMethod]
         public void TestToString()
         {
             var num = new DigitInt(123);
