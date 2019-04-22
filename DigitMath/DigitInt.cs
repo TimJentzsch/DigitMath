@@ -23,10 +23,17 @@ namespace DigitMath
         /// The values of the digits.
         /// </summary>
         byte[] Digits { get; set; }
+
+        protected byte RadixValue { get; set; }
+
         /// <summary>
         /// The base of the <see cref="DigitInt"/>.
         /// </summary>
-        byte Radix { get; }
+        public byte Radix
+        {
+            get => RadixValue;
+            set => SetRadix(value);
+        }
         /// <summary>
         /// Determines whether the value of the <see cref="DigitInt"/> is negative.
         /// </summary>
@@ -40,22 +47,22 @@ namespace DigitMath
         #region Constructors
         public DigitInt()
         {
-            Radix = 10;
+            RadixValue = 10;
             Digits = new byte[] { 0 };
             IsNegative = false;
         }
 
         public DigitInt(byte[] digits)
         {
-            Radix = 10;
+            RadixValue = 10;
             Digits = digits;
             IsNegative = false;
             HandleLeadingZeroes();
         }
 
-        public DigitInt(byte[] digits, byte numBase, bool isNegative)
+        public DigitInt(byte[] digits, byte radix, bool isNegative)
         {
-            Radix = numBase;
+            RadixValue = radix;
             Digits = digits;
             IsNegative = isNegative;
             HandleLeadingZeroes();
@@ -63,7 +70,7 @@ namespace DigitMath
 
         public DigitInt(int value)
         {
-            Radix = 10;
+            RadixValue = 10;
             
             if (value < 0)
             {
@@ -86,7 +93,55 @@ namespace DigitMath
 
         public DigitInt(int value, int radix)
         {
-            Radix = (byte)radix;
+            RadixValue = (byte)radix;
+
+            if (value < 0)
+            {
+                IsNegative = true;
+                value = -value;
+            }
+            else
+            {
+                IsNegative = false;
+            }
+
+            var numbers = new Queue<byte>();
+
+            for (; value > 0; value /= Radix)
+                numbers.Enqueue((byte)(value % Radix));
+
+            Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+
+            HandleLeadingZeroes();
+        }
+
+        public DigitInt(BigInteger value)
+        {
+            RadixValue = 10;
+
+            if (value < 0)
+            {
+                IsNegative = true;
+                value = -value;
+            }
+            else
+            {
+                IsNegative = false;
+            }
+
+            var numbers = new Queue<byte>();
+
+            for (; value > 0; value /= Radix)
+                numbers.Enqueue((byte)(value % Radix));
+
+            Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+
+            HandleLeadingZeroes();
+        }
+
+        public DigitInt(BigInteger value, int radix)
+        {
+            RadixValue = (byte)radix;
 
             if (value < 0)
             {
@@ -763,28 +818,33 @@ namespace DigitMath
         }
         #endregion
 
-        public void SetBase(byte newBase)
+        public void SetRadix(byte radix)
         {
-            if (newBase == Radix)
+            if (radix == Radix)
                 return;
 
-            throw new NotImplementedException();
-        }
+            var value = (BigInteger)this;
 
-        protected void ToBase10()
-        {
-            if (Radix == 10)
-                return;
+            RadixValue = radix;
 
-            throw new NotImplementedException();
-        }
+            if (value < 0)
+            {
+                IsNegative = true;
+                value = -value;
+            }
+            else
+            {
+                IsNegative = false;
+            }
 
-        protected void FromBase10(byte newBase)
-        {
-            if (Radix != 10)
-                throw new FormatException($"The number is in base {Radix}, but has to be in base 10.");
+            var numbers = new Queue<byte>();
 
-            throw new NotImplementedException();
+            for (; value > 0; value /= Radix)
+                numbers.Enqueue((byte)(value % Radix));
+
+            Digits = numbers.Count > 0 ? numbers.ToArray() : new byte[] { 0 };
+
+            HandleLeadingZeroes();
         }
 
         /// <summary>

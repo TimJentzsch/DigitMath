@@ -212,6 +212,21 @@ namespace DigitMathTests
         }
 
         [TestMethod]
+        public void TestRadix()
+        {
+            TestRadixHelper(3, 2, "11");
+            TestRadixHelper(15, 16, "F");
+            TestRadixHelper(-2201, 16, "-899");
+            TestRadixHelper(8590, 2, "10000110001110");
+        }
+
+        public void TestRadixHelper(int value, int radix, string str)
+        {
+            var digitValue = new DigitInt(value, radix);
+            Assert.AreEqual(str, digitValue.ToString(), $"({value})_{radix}");
+        }
+
+        [TestMethod]
         public void TestToString()
         {
             var num = new DigitInt(123);
