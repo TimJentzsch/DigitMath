@@ -808,6 +808,127 @@ namespace DigitMath
         }
         #endregion
 
+        #region Ditit Arithmetics
+        #region Additive
+        /// <summary>
+        /// Determines the sum of all <see cref="Digit"/>s.
+        /// </summary>
+        /// <returns>The sum of all <see cref="Digit"/>s.</returns>
+        public DigitInt DigitSum()
+        {
+            var sum = new DigitInt(0);
+
+            foreach (var digitVal in Digits)
+            {
+                sum += digitVal;
+            }
+
+            return sum;
+        }
+
+        /// <summary>
+        /// Determines the additive persistency of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <param name="digitalRoot">The additive digital root of the <see cref="DigitInt"/>.</param>
+        /// <returns>The additive persistency of the <see cref="DigitInt"/>.</returns>
+        public int AddPersistency(out Digit digitalRoot)
+        {
+            var value = this;
+            var persistency = 0;
+
+            while (value.Length > 1)
+            {
+                value = value.DigitSum();
+                persistency++;
+            }
+
+            digitalRoot = (Digit)value;
+
+            return persistency;
+        }
+
+        /// <summary>
+        /// Determines the additive persistency of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>The additive persistency of the <see cref="DigitInt"/>.</returns>
+        public int AddPersistency()
+        {
+            return AddPersistency(out _);
+        }
+
+        /// <summary>
+        /// Determines the additive digital root of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>The additive digital root of the <see cref="DigitInt"/>.</returns>
+        public Digit AddDigitalRoot()
+        {
+            AddPersistency(out Digit digitalRoot);
+            return digitalRoot;
+        }
+        #endregion
+
+        #region Multiplicative
+        /// <summary>
+        /// Determines the product of all <see cref="Digit"/>s.
+        /// </summary>
+        /// <returns>The product of all <see cref="Digit"/>s.</returns>
+        public DigitInt DigitProduct()
+        {
+            var product = new DigitInt(1);
+
+            foreach (var digitVal in Digits)
+            {
+                product *= digitVal;
+
+                if (product == 0)
+                    return product;
+            }
+
+            return product;
+        }
+
+        /// <summary>
+        /// Determines the multiplicative persistency of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <param name="digitalRoot">The multiplicative digital root of the <see cref="DigitInt"/>.</param>
+        /// <returns>The multiplicative persistency of the <see cref="DigitInt"/>.</returns>
+        public int MultPersistency(out Digit digitalRoot)
+        {
+            var value = this;
+            var persistency = 0;
+
+            while (value.Length > 1)
+            {
+                value = value.DigitProduct();
+                persistency++;
+            }
+
+            digitalRoot = (Digit)value;
+
+            return persistency;
+        }
+
+        /// <summary>
+        /// Determines the multiplicative persistency of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>The multiplicative persistency of the <see cref="DigitInt"/>.</returns>
+        public int MultPersistency()
+        {
+            return MultPersistency(out _);
+        }
+
+        /// <summary>
+        /// Determines the multiplicative digital root of the <see cref="DigitInt"/>.
+        /// </summary>
+        /// <returns>The multiplicative digital root of the <see cref="DigitInt"/>.</returns>
+        public Digit MultDigitalRoot()
+        {
+            MultPersistency(out Digit digitalRoot);
+            return digitalRoot;
+        }
+        #endregion
+        #endregion
+
         /// <summary>
         /// Gets the hashcode of the <see cref="DigitInt"/>.
         /// </summary>
@@ -1114,6 +1235,11 @@ namespace DigitMath
         public static explicit operator string(DigitInt value)
         {
             return value.ToString();
+        }
+
+        public static explicit operator Digit(DigitInt value)
+        {
+            return new Digit(value.GetLSD(), value.Radix);
         }
         #endregion
         #endregion
