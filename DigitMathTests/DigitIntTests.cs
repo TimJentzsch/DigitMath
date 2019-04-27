@@ -265,6 +265,18 @@ namespace DigitMathTests
             num = new DigitInt(2623, 16);
             Assert.AreEqual("A3F", num.ToString());
         }
+
+        [TestMethod]
+        public void TestEnumerator()
+        {
+            var value = new DigitInt(31425);
+            var counter = 0;
+
+            foreach (var digit in value)
+            {
+                Assert.AreEqual(value.GetLSD(counter), digit, $"LSD {counter} of ({value}).");
+            }
+        }
         #endregion
     }
 }

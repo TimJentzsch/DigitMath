@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace DigitMath
 {
     /// <summary>
     /// A digit oriented presentation of an Integer value.
     /// </summary>
-    public class DigitInt : IComparable<DigitInt>, IConvertible
+    public class DigitInt : IComparable<DigitInt>, IConvertible, IEnumerable<Digit>
     {
         #region Attributes
         #region Indexers
@@ -1367,6 +1368,28 @@ namespace DigitMath
             }
 
             return str.ToString();
+        }
+        #endregion
+
+        #region Enumeration
+        /// <summary>
+        /// Gets an enumerator that enumerates over all <see cref="Digit"/>s.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through all <see cref="Digit"/>s.</returns>
+        public IEnumerator<Digit> GetEnumerator()
+        {
+            return (from digitVal in Digits
+                    select new Digit(digitVal, Radix))
+                   .GetEnumerator();
+        }
+
+        /// <summary>
+        /// Gets an enumerator that enumerates over all <see cref="Digit"/>s.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through all <see cref="Digit"/>s.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
         #endregion
         #endregion
