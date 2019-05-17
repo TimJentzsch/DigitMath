@@ -11,7 +11,7 @@ jobs:
         - dotnet build
     - stage: "Unit Tests"
       script:
-        - cd "../DigitMathTests"
+        - cd "DigitMathTests"
         - dotnet restore
         - dotnet build
         - dotnet test
