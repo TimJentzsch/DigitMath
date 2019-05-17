@@ -1,0 +1,17 @@
+language: csharp
+mono: none
+dotnet: 2.0.0
+
+jobs:
+  include:
+    - stage: "Build"
+      script:
+        - cd "DigitMath"
+        - dotnet restore
+        - dotnet build
+    - stage: "Unit Tests"
+      script:
+        - cd "../DigitMathTests"
+        - dotnet restore
+        - dotnet build
+        - dotnet test
