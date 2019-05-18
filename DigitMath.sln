@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitMath", "DigitMath\DigitMath.csproj", "{3D00038A-DDA8-499D-B0DF-64153D867184}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitMathTests", "DigitMathTests\DigitMathTests.csproj", "{2393D02D-5A58-42D5-A41D-1878568BE330}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitMath.Tests", "DigitMath.Tests\DigitMath.Tests.csproj", "{D9B17D30-AE1C-4E4D-85F2-BEBBCB0CB1F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{3D00038A-DDA8-499D-B0DF-64153D867184}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D00038A-DDA8-499D-B0DF-64153D867184}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D00038A-DDA8-499D-B0DF-64153D867184}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2393D02D-5A58-42D5-A41D-1878568BE330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2393D02D-5A58-42D5-A41D-1878568BE330}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2393D02D-5A58-42D5-A41D-1878568BE330}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2393D02D-5A58-42D5-A41D-1878568BE330}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9B17D30-AE1C-4E4D-85F2-BEBBCB0CB1F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9B17D30-AE1C-4E4D-85F2-BEBBCB0CB1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9B17D30-AE1C-4E4D-85F2-BEBBCB0CB1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9B17D30-AE1C-4E4D-85F2-BEBBCB0CB1F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

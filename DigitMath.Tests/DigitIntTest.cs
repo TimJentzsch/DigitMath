@@ -1,11 +1,9 @@
-﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DigitMath;
 
-namespace DigitMathTests
+namespace DigitMath.Tests
 {
     [TestClass]
-    public class DigitIntTests : DigitInt
+    public class DigitIntTest : DigitInt
     {
         #region Attributes
         [TestMethod]
