@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/TimJentzsch/DigitMath.svg?branch=master)](https://travis-ci.com/TimJentzsch/DigitMath)
+
 # DigitMath
 
 A library for digit-based calculations.
